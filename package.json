@@ -1,0 +1,24 @@
+{
+  "name": "tabhub-card-action",
+  "version": "1.0.0",
+  "description": "An GitHub Action for create your own TabHub cards.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "ncc build index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tabhub/tabhub-card-action.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tabhub/tabhub-card-action/issues"
+  },
+  "homepage": "https://github.com/tabhub/tabhub-card-action#readme",
+  "dependencies": {
+    "@actions/core": "^1.2.4",
+    "json2md": "^1.7.0"
+  }
+}

@@ -1,0 +1,13 @@
+name: 'TabHub Card Action'
+description: 'Build your own TabHub cards rpeo'
+inputs:
+  need-gene-readme:
+    description: 'If need the action to generate a README file includes a resource list'
+    required: false
+    default: true
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
+branding:
+  icon: 'image'
+  color: 'green'
