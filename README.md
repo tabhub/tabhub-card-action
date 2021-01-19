@@ -1,6 +1,6 @@
-# TabHub Card Action 
+# TabHub Card Action
 
-TabHub Card Action helps you to generate your own album cards used in [TabHub Chrome Extension](https://tabhub.io). 
+TabHub Card Action helps you to generate your own album cards used in [TabHub Chrome Extension](https://tabhub.io).
 
 ## Usage
 
@@ -46,10 +46,6 @@ jobs:
             git config --global user.name "ActionCloud Bot"
             git add .
             git commit -m "Update manifest"
+            git push
         fi
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: ${{ github.ref }}
 ```
