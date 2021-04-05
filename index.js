@@ -29,6 +29,7 @@ function walkDirs(dirPath) {
     const imageList = readImageDir(imageDir);
     if (imageList) {
       const imageManifest = toImageManifest(imageList, dirPath);
+      console.log(`manifest: ${imageManifest}`);
       dumpData(imageManifest, path.join(dirPath, "manifest.json"));
     }
     return;
