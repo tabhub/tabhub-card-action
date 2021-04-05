@@ -52,7 +52,7 @@ function toImageManifest(imageList, dirPath) {
     })
   });
   return {
-    name: "",
+    name: `${repo}/${dirPath}`,
     version: "1.0",
     repo: `https://github.com/${repo}/tree/${gitRef}/${dirPath}`,
     type: "resource",
