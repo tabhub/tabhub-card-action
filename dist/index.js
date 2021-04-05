@@ -319,6 +319,7 @@ function walkDirs(dirPath) {
     const imageList = readImageDir(imageDir);
     if (imageList) {
       const imageManifest = toImageManifest(imageList, dirPath);
+      console.log(`manifest: ${imageManifest}`);
       dumpData(imageManifest, path.join(dirPath, "manifest.json"));
     }
     return;
@@ -342,7 +343,7 @@ function toImageManifest(imageList, dirPath) {
     })
   });
   return {
-    name: "",
+    name: `${repo}/${dirPath}`,
     version: "1.0",
     repo: `https://github.com/${repo}/tree/${gitRef}/${dirPath}`,
     type: "resource",
