@@ -50,6 +50,68 @@ module.exports = require("os");
 
 /***/ }),
 
+/***/ 124:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+// For internal use, subject to change.
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+// We use any as a valid input type
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const fs = __importStar(__webpack_require__(747));
+const os = __importStar(__webpack_require__(87));
+const utils_1 = __webpack_require__(127);
+function issueCommand(command, message) {
+    const filePath = process.env[`GITHUB_${command}`];
+    if (!filePath) {
+        throw new Error(`Unable to find environment variable for file command ${command}`);
+    }
+    if (!fs.existsSync(filePath)) {
+        throw new Error(`Missing file at path: ${filePath}`);
+    }
+    fs.appendFileSync(filePath, `${utils_1.toCommandValue(message)}${os.EOL}`, {
+        encoding: 'utf8'
+    });
+}
+exports.issueCommand = issueCommand;
+//# sourceMappingURL=file-command.js.map
+
+/***/ }),
+
+/***/ 127:
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+// We use any as a valid input type
+/* eslint-disable @typescript-eslint/no-explicit-any */
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Sanitizes an input into a string so it can be passed into issueCommand safely
+ * @param input input to sanitize into a string
+ */
+function toCommandValue(input) {
+    if (input === null || input === undefined) {
+        return '';
+    }
+    else if (typeof input === 'string' || input instanceof String) {
+        return input;
+    }
+    return JSON.stringify(input);
+}
+exports.toCommandValue = toCommandValue;
+//# sourceMappingURL=utils.js.map
+
+/***/ }),
+
 /***/ 215:
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
@@ -64,6 +126,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const os = __importStar(__webpack_require__(87));
+const utils_1 = __webpack_require__(127);
 /**
  * Commands
  *
@@ -117,28 +180,14 @@ class Command {
         return cmdStr;
     }
 }
-/**
- * Sanitizes an input into a string so it can be passed into issueCommand safely
- * @param input input to sanitize into a string
- */
-function toCommandValue(input) {
-    if (input === null || input === undefined) {
-        return '';
-    }
-    else if (typeof input === 'string' || input instanceof String) {
-        return input;
-    }
-    return JSON.stringify(input);
-}
-exports.toCommandValue = toCommandValue;
 function escapeData(s) {
-    return toCommandValue(s)
+    return utils_1.toCommandValue(s)
         .replace(/%/g, '%25')
         .replace(/\r/g, '%0D')
         .replace(/\n/g, '%0A');
 }
 function escapeProperty(s) {
-    return toCommandValue(s)
+    return utils_1.toCommandValue(s)
         .replace(/%/g, '%25')
         .replace(/\r/g, '%0D')
         .replace(/\n/g, '%0A')
@@ -181,12 +230,13 @@ var converters = __webpack_require__(790),
  * | `h6`         | Heading 6          | The heading text as string.                                                                                              | `{ h6: "heading 6" }`                                                                                                                            |
  * | `p`          | Paragraphs         | The paragraph text as string or array (multiple paragraphs).                                                             | `{ p: "Hello World"}` or multiple paragraphs: `{ p: ["Hello", "World"] }`                                                                        |
  * | `blockquote` | Blockquote         | The blockquote as string or array (multiple blockquotes)                                                                 | `{ blockquote: "Hello World"}` or multiple blockquotes: `{ blockquote: ["Hello", "World"] }`                                                     |
- * | `img`        | Image              | An object or an array of objects containing the `title` and `source` fields.                                             | `{ img: { title: "My image title", source: "http://example.com/image.png" } }`                                                                   |
- * | `ul`         | Unordered list     | An array of strings representing the items.                                                                              | `{ ul: ["item 1", "item 2"] }`                                                                                                                   |
- * | `ol`         | Ordered list       | An array of strings representing the items.                                                                              | `{ ol: ["item 1", "item 2"] }`                                                                                                                   |
+ * | `img`        | Image              | An object or an array of objects containing the `title`, `source` and `alt`  fields.                                     | `{ img: { title: "My image title", source: "http://example.com/image.png", alt: "My image alt" } }`                                              |
+ * | `ul`         | Unordered list     | An array of strings or lists representing the items.                                                                     | `{ ul: ["item 1", "item 2"] }`                                                                                                                   |
+ * | `ol`         | Ordered list       | An array of strings or lists representing the items.                                                                     | `{ ol: ["item 1", "item 2"] }`                                                                                                                   |
+ * | `hr`         | Separator          | None                                                                                                                     | `{ hr: "" }`                                                                                                                                     |
  * | `code`       | Code block element | An object containing the `language` (`String`) and `content` (`Array` or `String`)  fields.                              | `{ code: { "language": "html", "content": "<script src='dummy.js'></script>" } }`                                                                |
  * | `table`      | Table              | An object containing the `headers` (`Array` of `String`s) and `rows` (`Array` of `Array`s or `Object`s).                 | `{ table: { headers: ["a", "b"], rows: [{ a: "col1", b: "col2" }] } }` or `{ table: { headers: ["a", "b"], rows: [["col1", "col2"]] } }`         |
- * | `link`       | Link               | An object containing the `title` and the `source` fields.                                                                | `{ title: 'hello', source: 'https://ionicabizau.net' }
+ * | `link`       | Link               | An object containing the `title` and the `source` fields.                                                                | `{ title: 'hello', source: 'https://ionicabizau.net' }`                                                                                          |
  *
  *
  * You can extend the `json2md.converters` object to support your custom types.
@@ -403,6 +453,8 @@ function geneReadme() {
     , { h3: "Resource List"}
     , { p: "You can copy one of link addresses below as a resource url to add in your [TabHub](https://tabhub.io) settings:" }
     , { ul: manifestList }
+    , { hr: "" }
+    , { p: "<img src=https://raw.githubusercontent.com/image-store/github/master/add-tabhub-resource-url.png width=350>"}
   ]);
 
   fs.writeFile('./README.md', text, (err) => {
@@ -431,6 +483,8 @@ module.exports = require("fs");
 
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var converters = module.exports = {};
 
@@ -463,10 +517,12 @@ var parseTextFormat = function parseTextFormat(text) {
 
     var formats = {
         strong: "**",
-        italic: "*"
+        italic: "*",
+        underline: "_",
+        strikethrough: "~~"
     };
 
-    return text.replace(/<\/?strong\>/gi, formats.strong).replace(/<\/?bold\>/gi, formats.strong).replace(/<\/?em\>/gi, formats.italic).replace(/<\/?italic\>/gi, formats.italic);
+    return text.replace(/<\/?strong\>/gi, formats.strong).replace(/<\/?bold\>/gi, formats.strong).replace(/<\/?em\>/gi, formats.italic).replace(/<\/?italic\>/gi, formats.italic).replace(/<\/?u\>/gi, formats.underline).replace(/<\/?strike\>/gi, formats.strikethrough);
 };
 
 // Headings
@@ -541,22 +597,73 @@ converters.p = function (input, json2md) {
 };
 
 converters.table = function (input, json2md) {
+    var _PREFERRED_LENGTH_PER;
+
+    var ALIGNMENT = {
+        CENTER: 'center',
+        RIGHT: 'right',
+        LEFT: 'left',
+        NONE: 'none'
+    };
+
+    var PREFERRED_LENGTH_PER_ALIGNMENT = (_PREFERRED_LENGTH_PER = {}, _defineProperty(_PREFERRED_LENGTH_PER, ALIGNMENT.CENTER, 3), _defineProperty(_PREFERRED_LENGTH_PER, ALIGNMENT.RIGHT, 2), _defineProperty(_PREFERRED_LENGTH_PER, ALIGNMENT.LEFT, 2), _defineProperty(_PREFERRED_LENGTH_PER, ALIGNMENT.NONE, 1), _PREFERRED_LENGTH_PER);
 
     if ((typeof input === "undefined" ? "undefined" : _typeof(input)) !== "object" || !input.hasOwnProperty("headers") || !input.hasOwnProperty("rows")) {
         return "";
     }
 
-    var header = " | " + input.headers.join(" | ") + " | ",
-        spaces = " | " + input.headers.map(function () {
-        return "---";
-    }).join(" | ") + " | ",
-        data = " | " + input.rows.map(function (r) {
-        return Array.isArray(r) ? r.map(function (el) {
-            return parseTextFormat(json2md(el));
-        }).join(" | ") : input.headers.map(function (h) {
-            return parseTextFormat(json2md(r[h]));
+    var alignment = input.headers.map(function (_, index) {
+        return input.aligns && input.aligns[index] ? input.aligns[index] : ALIGNMENT.NONE;
+    });
+
+    // try to match the space the column name and the dashes (and colons) take up. Minimum depends on alignment
+    var preferred_lengths = input.headers.map(function (header, index) {
+        return Math.max(PREFERRED_LENGTH_PER_ALIGNMENT[alignment[index]], header.length - 2);
+    });
+
+    // add spaces around column name if necessary (side(s) depends on alignment)
+    var column_names = input.headers.map(function (header, index) {
+        var diff = preferred_lengths[index] + 2 - header.length;
+        switch (alignment[index]) {
+            case ALIGNMENT.RIGHT:
+                return " ".repeat(diff) + header;
+            case ALIGNMENT.LEFT:
+                return header + " ".repeat(diff);
+            case ALIGNMENT.CENTER:
+            case ALIGNMENT.NONE:
+            default:
+                return " ".repeat(Math.floor(diff / 2)) + header + " ".repeat(Math.ceil(diff / 2));
+        }
+    });
+
+    var header = "| " + column_names.join(" | ") + " |";
+
+    var spaces = "| " + input.headers.map(function (_, index) {
+        var inner = "-".repeat(preferred_lengths[index]);
+        switch (alignment[index]) {
+            case ALIGNMENT.CENTER:
+                return ":" + inner + ":";
+            case ALIGNMENT.RIGHT:
+                return "-" + inner + ":";
+            case ALIGNMENT.LEFT:
+                return ":" + inner + "-";
+            case ALIGNMENT.NONE:
+            default:
+                return "-" + inner + "-";
+        }
+    }).join(" | ") + " |";
+
+    var data = "| " + input.rows.map(function (row) {
+        return (Array.isArray(row) ? row : input.headers.map(function (col_id) {
+            return row[col_id];
+        })).map(function (cell) {
+            return json2md(cell);
+        }).map(function (cell) {
+            return parseTextFormat(cell);
+        }).map(function (cell) {
+            return cell.replace(/([^\\])\|/, "$1\\|");
         }).join(" | ");
-    }).join("\n") + " | ";
+    }).join("\n") + " |";
 
     return [header, spaces, data].join("\n");
 };
@@ -569,6 +676,10 @@ converters.link = function (input, json2md) {
         return converters.link({ source: input, title: "" });
     }
     return "[" + input.title + "](" + input.source + ")";
+};
+
+converters.hr = function (input, json2md) {
+    return '---';
 };
 
 /***/ }),
@@ -596,6 +707,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = __webpack_require__(215);
+const file_command_1 = __webpack_require__(124);
+const utils_1 = __webpack_require__(127);
 const os = __importStar(__webpack_require__(87));
 const path = __importStar(__webpack_require__(277));
 /**
@@ -622,9 +735,17 @@ var ExitCode;
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function exportVariable(name, val) {
-    const convertedVal = command_1.toCommandValue(val);
+    const convertedVal = utils_1.toCommandValue(val);
     process.env[name] = convertedVal;
-    command_1.issueCommand('set-env', { name }, convertedVal);
+    const filePath = process.env['GITHUB_ENV'] || '';
+    if (filePath) {
+        const delimiter = '_GitHubActionsFileCommandDelimeter_';
+        const commandValue = `${name}<<${delimiter}${os.EOL}${convertedVal}${os.EOL}${delimiter}`;
+        file_command_1.issueCommand('ENV', commandValue);
+    }
+    else {
+        command_1.issueCommand('set-env', { name }, convertedVal);
+    }
 }
 exports.exportVariable = exportVariable;
 /**
@@ -640,7 +761,13 @@ exports.setSecret = setSecret;
  * @param inputPath
  */
 function addPath(inputPath) {
-    command_1.issueCommand('add-path', {}, inputPath);
+    const filePath = process.env['GITHUB_PATH'] || '';
+    if (filePath) {
+        file_command_1.issueCommand('PATH', inputPath);
+    }
+    else {
+        command_1.issueCommand('add-path', {}, inputPath);
+    }
     process.env['PATH'] = `${inputPath}${path.delimiter}${process.env['PATH']}`;
 }
 exports.addPath = addPath;
@@ -667,6 +794,7 @@ exports.getInput = getInput;
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function setOutput(name, value) {
+    process.stdout.write(os.EOL);
     command_1.issueCommand('set-output', { name }, value);
 }
 exports.setOutput = setOutput;

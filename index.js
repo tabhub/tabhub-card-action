@@ -113,6 +113,8 @@ function geneReadme() {
     , { h3: "Resource List"}
     , { p: "You can copy one of link addresses below as a resource url to add in your [TabHub](https://tabhub.io) settings:" }
     , { ul: manifestList }
+    , { hr: "" }
+    , { p: "<img src=https://raw.githubusercontent.com/image-store/github/master/add-tabhub-resource-url.png width=350>"}
   ]);
 
   fs.writeFile('./README.md', text, (err) => {
