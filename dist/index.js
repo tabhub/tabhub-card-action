@@ -406,7 +406,7 @@ function toRawUrl(filePath) {
 }
 
 function readImageDir(imageDir) {
-  const imageExts = ["png", "jpg", "jpeg", "bmp"];
+  const imageExts = ["png", "jpg", "jpeg", "bmp", "svg", "webp"];
   let imagePathList = [];
 
   fs.readdirSync(imageDir).forEach(file => {
