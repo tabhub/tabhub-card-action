@@ -4,6 +4,7 @@ const path = require('path');
 const json2md = require("json2md");
 
 const needGeneReadme = core.getInput('need-gene-readme');
+const background = core.getInput('background');
 
 const repo = process.env.GITHUB_REPOSITORY;
 const repoInfo = repo.split("/");
@@ -49,7 +50,8 @@ function toImageManifest(imageList, dirPath) {
   imageList.forEach(imagePath => {
     items.push({
       "type": "image",
-      "url": toRawUrl(imagePath)
+      "url": toRawUrl(imagePath),
+      "background_style": background
     })
   });
   return {

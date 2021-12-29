@@ -5,6 +5,10 @@ inputs:
     description: 'If need the action to generate a README file includes a resource list'
     required: false
     default: true
+  background:
+    description: 'Background color for showing images'
+    required: false
+    default: '#000'
 runs:
   using: 'node12'
   main: 'dist/index.js'

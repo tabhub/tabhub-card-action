@@ -344,6 +344,7 @@ const path = __webpack_require__(277);
 const json2md = __webpack_require__(441);
 
 const needGeneReadme = core.getInput('need-gene-readme');
+const background = core.getInput('background');
 
 const repo = process.env.GITHUB_REPOSITORY;
 const repoInfo = repo.split("/");
@@ -389,7 +390,8 @@ function toImageManifest(imageList, dirPath) {
   imageList.forEach(imagePath => {
     items.push({
       "type": "image",
-      "url": toRawUrl(imagePath)
+      "url": toRawUrl(imagePath),
+      "background_style": background
     })
   });
   return {
